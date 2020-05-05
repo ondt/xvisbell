@@ -23,6 +23,9 @@
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 
+#include <X11/extensions/Xfixes.h>
+#include <X11/extensions/shape.h>
+
 #include <iostream>
 #include <stdexcept>
 
@@ -32,6 +35,7 @@
 #include <sys/time.h>
 
 const struct timeval window_timeout = {0, 100000};
+//const struct timeval window_timeout = {0, 1000000}; // long duration for testing
 
 // -1 means for w or h means screen width or height
 struct {
@@ -109,6 +113,12 @@ int main() {
                            vis,
                            CWBackPixel | CWOverrideRedirect | CWSaveUnder,
                            &attrs);
+
+  // from the question at https://stackoverflow.com/q/21780789
+  XserverRegion region = XFixesCreateRegion(dpy, NULL, 0);
+  XFixesSetWindowShapeRegion(dpy, win, ShapeBounding, 0, 0, 0);
+  XFixesSetWindowShapeRegion(dpy, win, ShapeInput, 0, 0, region);
+  XFixesDestroyRegion(dpy, region);
 
   while (true) {
     struct timeval tv, *wait_tv = nullptr;
