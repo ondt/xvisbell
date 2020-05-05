@@ -187,19 +187,9 @@ int main() {
         // timeout fired
         XUnmapWindow(dpy, win);
         timeout_is_set = false;
+        exit(0);
       }
     }
-
-    while (XPending(dpy)) {
-      XEvent ev;
-      XNextEvent(dpy, &ev);
-
-      // TODO: handle resize events on root window
-
-      // TODO: this reinterpret cast is not good
-      if (reinterpret_cast<XkbEvent *>(&ev)->any.xkb_type != XkbBellNotify) {
-        continue;
-      }
 
       XMapRaised(dpy, win);
 
@@ -209,10 +199,5 @@ int main() {
         throw std::runtime_error("getttimeofday() error!");
       }
       future_wakeup += window_timeout;
-
-      // ignore for now...
-      // auto bne = reinterpret_cast<XkbBellNotifyEvent *>(&ev);
-    }
   }
 }
-

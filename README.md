@@ -1,3 +1,19 @@
+### Modifications:
+
+- Flashes the entire screen instead of a 16px bar at the top of the screen (configurable)
+- Moved all configuration options to the same place (near top of file, just below the '#include's)
+- Properly pass through keyboard/mouse events from the flash window to the windows that it is covering
+- Added oneshot mode (instead of listening for X11 bell events, makes a single flash jnd then exits)
+
+
+### Usage:
+
+Configure either `xvisbell-daemon.cpp` (listens for X11 bell events) or `xvisbell-oneshot.cpp` (flashes once and exits) as desired - options are near the top of the file, just under the `#include`s. Run `make daemon` or `make oneshot`, then run the generated `xvisbell-daemon` or `xvisbell-oneshot` binary.
+
+---
+
+Original xvisbell readme:
+
 xvisbell
 ========
 
