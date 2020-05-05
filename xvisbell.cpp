@@ -34,14 +34,37 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-const struct timeval window_timeout = {0, 100000};
-//const struct timeval window_timeout = {0, 1000000}; // long duration for testing
 
-// -1 means for w or h means screen width or height
-struct {
-  int x, y;
-  int w, h;
-} geometry = {0, 0, -1, -1};
+
+// CONFIGURATION
+
+// Change this to false to use a white flash instead of a black flash.
+const bool use_black_color = true;
+
+// Flash overlay window size: x, y, width, height
+// -1 for width or height means same as your screen's size.
+struct { int x, y; int w, h; }
+geometry = {0, 0, -1, -1};
+
+// Flash duration              { seconds, microseconds }  (1 sec = 1 million µs)
+const struct timeval window_timeout = {0, 16667*4};
+
+// Theoretically this could be set to the duration of a single frame to minimize
+//   interruption, and a single black frame might be noticeable even at 144 Hz
+//   (a single white frame would very likely be noticeable), but I had issues
+//   with the flash not properly appearing if the duration was too low.
+
+// Monitor refresh rate & duration of a single frame (µsec):
+//  30: 33,333       24: 41,667
+//  60: 16,667       75: 13,333
+// 120:  8,333      144:  6,944
+// 240:  4,167      formula = 1,000,000 / refresh rate
+
+// END OF CONFIGURATION
+
+
+
+
 
 bool operator<(const struct timeval & a,
                const struct timeval & b) {
@@ -95,8 +118,10 @@ int main() {
   XkbChangeEnabledControls(dpy, XkbUseCoreKbd, XkbAudibleBellMask, 0);
 
   XSetWindowAttributes attrs;
-  //attrs.background_pixel = WhitePixel(dpy, scr);
-  attrs.background_pixel = BlackPixel(dpy, scr);
+  if (use_black_color)
+    attrs.background_pixel = BlackPixel(dpy, scr);
+  else
+    attrs.background_pixel = WhitePixel(dpy, scr);
   attrs.override_redirect = True;
   attrs.save_under = True;
 
