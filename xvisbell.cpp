@@ -41,7 +41,7 @@ const struct timeval window_timeout = {0, 100000};
 struct {
   int x, y;
   int w, h;
-} geometry = {0, 0, -1, 16};
+} geometry = {0, 0, -1, -1};
 
 bool operator<(const struct timeval & a,
                const struct timeval & b) {
@@ -95,7 +95,8 @@ int main() {
   XkbChangeEnabledControls(dpy, XkbUseCoreKbd, XkbAudibleBellMask, 0);
 
   XSetWindowAttributes attrs;
-  attrs.background_pixel = WhitePixel(dpy, scr);
+  //attrs.background_pixel = WhitePixel(dpy, scr);
+  attrs.background_pixel = BlackPixel(dpy, scr);
   attrs.override_redirect = True;
   attrs.save_under = True;
 
