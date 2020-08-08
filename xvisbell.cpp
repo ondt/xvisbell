@@ -38,6 +38,9 @@
 
 // CONFIGURATION
 
+// Change this to true to exit after the first bell is received.
+const bool oneshot = false;
+
 // Change this to false to use a white flash instead of a black flash.
 const bool use_black_color = true;
 
@@ -189,17 +192,32 @@ int main() {
 				// timeout fired
 				XUnmapWindow(dpy, win);
 				timeout_is_set = false;
-				exit(0);
+				if (oneshot) exit(0);
 			}
 		}
 		
-		XMapRaised(dpy, win);
-		
-		// reset timeout
-		timeout_is_set = true;
-		if (gettimeofday(&future_wakeup, nullptr) < 0) {
-			throw std::runtime_error("getttimeofday() error!");
+		while (XPending(dpy)) {
+			XEvent ev;
+			XNextEvent(dpy, &ev);
+			
+			// TODO: handle resize events on root window
+			
+			// TODO: this reinterpret cast is not good
+			if (reinterpret_cast<XkbEvent *>(&ev)->any.xkb_type != XkbBellNotify) {
+				continue;
+			}
+			
+			XMapRaised(dpy, win);
+			
+			// reset timeout
+			timeout_is_set = true;
+			if (gettimeofday(&future_wakeup, nullptr) < 0) {
+				throw std::runtime_error("getttimeofday() error!");
+			}
+			future_wakeup += window_timeout;
+			
+			// ignore for now...
+			// auto bne = reinterpret_cast<XkbBellNotifyEvent *>(&ev);
 		}
-		future_wakeup += window_timeout;
 	}
 }
