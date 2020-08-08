@@ -1,3 +1,5 @@
+all: daemon oneshot
+
 daemon: xvisbell-daemon.cpp
 	c++ -std=c++14 -Wall -Wextra -Werror -o xvisbell-daemon xvisbell-daemon.cpp -lX11 -lXfixes
 
