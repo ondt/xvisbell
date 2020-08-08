@@ -41,8 +41,8 @@
 // Change this to true to exit after the first bell is received.
 const bool oneshot = false;
 
-// Change this to false to use a white flash instead of a black flash.
-const bool use_black_color = true;
+// Change this to true to use a black flash instead of a white flash.
+const bool use_black_color = false;
 
 // Flash overlay window size: x, y, width, height
 // -1 for width or height means same as your screen's size.
@@ -52,7 +52,7 @@ struct {
 } geometry = {0, 0, -1, -1};
 
 // Flash duration              { seconds, microseconds }  (1 sec = 1 million µs)
-const struct timeval window_timeout = {0, 16667 * 4};
+const struct timeval window_timeout = {0, 16667 * 6};
 
 // Theoretically this could be set to the duration of a single frame to minimize
 //   interruption, and a single black frame might be noticeable even at 144 Hz
